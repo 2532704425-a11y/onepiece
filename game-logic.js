@@ -193,13 +193,14 @@ let state = {
 };
 
 // ===== API配置（智谱AI GLM-4-Flash） =====
-// 优先使用本地代理(避免CORS)，降级直连
+// Vercel部署: 使用相对路径 /api/chat（serverless函数自动处理CORS）
+// 本地开发: node proxy-server.js 后也可用 localhost:3456
 const API_CONFIG = {
-  proxyUrl: 'http://localhost:3456/api/chat',
+  proxyUrl: '/api/chat',
   directUrl: 'https://open.bigmodel.cn/api/paas/v4/chat/completions',
   key: '48563eab875b43b1b3330ddbab1d7a7b.CEWi3il7NttkY7RL',
   model: 'glm-4-flash',
-  useProxy: true  // 默认使用代理
+  useProxy: true  // 默认使用代理（Vercel上始终为true）
 };
 
 function getApiUrl() {
@@ -890,6 +891,13 @@ window.addEventListener('resize', handleResize);
 
 // ===== 启动时检测代理可用性 =====
 (function checkProxy() {
+  // Vercel部署时 /api/chat 始终可用，无需检测
+  // 本地开发时检测 proxy-server.js 是否运行
+  if (API_CONFIG.proxyUrl === '/api/chat') {
+    API_CONFIG.useProxy = true;
+    console.log('Using serverless API endpoint: /api/chat');
+    return;
+  }
   fetch(API_CONFIG.proxyUrl, {method: 'OPTIONS'})
   .then(function() {
     API_CONFIG.useProxy = true;
