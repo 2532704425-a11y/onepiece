@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no,viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#1a1206">
+<title>海贼王猜角色小游戏</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- ========== 界面1：难度选择 ========== -->
+<div id="page-menu" class="page active">
+  <div class="menu-overlay">
+    <div class="title-area">
+      <img class="title-mascot" src="UI/ed98e7765c53c5124815a3e105d95cc9.png" alt="路飞">
+      <h1 class="game-title">海贼王猜角色小游戏</h1>
+    </div>
+    <div class="rules-card">
+      <h3>游戏规则</h3>
+      <p>系统会从角色库中随机选取角色展示在棋盘上，其中一个是谜底。<br>
+      你可以向AI提问关于谜底角色的特征问题（如：是男性吗？），AI只会回答「是」「否」或「不确定」。<br>
+      <b style="color:#ffd54f">单击</b>卡片 → 快速<b>排除</b>；<b style="color:#ffd54f">长按</b>卡片 → 进行<b>猜测</b>。<br>
+      你有<span class="warn">3次</span>猜测机会，难度越高，角色越多，挑战越大！</p>
+    </div>
+    <div class="diff-buttons">
+      <button class="diff-btn diff-easy" onclick="startGame('easy')">
+        <img src="UI/简单难度按钮.png" alt="简单">
+      </button>
+      <button class="diff-btn diff-medium" onclick="startGame('medium')">
+        <img src="UI/中级难度按钮.png" alt="中等">
+      </button>
+      <button class="diff-btn diff-hard" onclick="startGame('hard')">
+        <img src="UI/高级难度按钮.png" alt="高级">
+      </button>
+    </div>
+  </div>
+  <div class="crew-bar">
+    <img class="crew-char" src="UI/布鲁克UI.png" alt="布鲁克">
+    <img class="crew-char" src="UI/乌索普UI.png" alt="乌索普">
+    <img class="crew-char" src="UI/娜美UI.png" alt="娜美">
+    <img class="crew-char" src="UI/索隆UI.png" alt="索隆">
+    <img class="crew-char" src="UI/路飞UI.png" alt="路飞">
+    <img class="crew-char" src="UI/山治UI.png" alt="山治">
+    <img class="crew-char" src="UI/甚平UI.png" alt="甚平">
+    <img class="crew-char" src="UI/乔巴UI.png" alt="乔巴">
+    <img class="crew-char" src="UI/罗宾UI.png" alt="罗宾">
+    <img class="crew-char" src="UI/弗兰奇UI.png" alt="弗兰奇">
+  </div>
+</div>
+
+<!-- ========== 界面2：游戏主界面 ========== -->
+<div id="page-game" class="page">
+  <div class="game-topbar">
+    <div class="topbar-controls">
+      <button class="ctrl-btn" onclick="backToMenu()" title="返回主页"><img src="UI/主页按钮.png" alt="主页"></button>
+      <button class="ctrl-btn" onclick="restartGame()" title="重新开始"><img src="UI/重来按钮.png" alt="重来"></button>
+      <button class="ctrl-btn" onclick="toggleEliminated()" title="显示/隐藏已排除"><img src="UI/设置按钮.png" alt="设置"></button>
+    </div>
+    <div class="topbar-stats">
+      <span class="stat-item" title="游戏计时">⏱ <span id="game-timer">00:00</span></span>
+      <span class="stat-item" title="提问次数">💬 <span id="question-count">0</span>次</span>
+    </div>
+    <span class="topbar-diff" id="topbar-diff-label"></span>
+    <div class="guess-info">
+      <span>剩余猜测：</span>
+      <div class="guess-dots" id="guess-dots"></div>
+    </div>
+  </div>
+  <div class="game-left">
+    <div id="char-grid" class="char-grid"></div>
+  </div>
+  <!-- 手机端tab切换栏 -->
+  <div class="mobile-tabs" id="mobile-tabs">
+    <button class="mobile-tab active" onclick="switchTab('grid')" id="tab-grid">🏴‍☠️ 角色</button>
+    <button class="mobile-tab" onclick="switchTab('chat')" id="tab-chat">💬 聊天</button>
+  </div>
+  <div class="game-right">
+    <div id="chat-messages" class="chat-messages">
+      <div class="chat-welcome">
+        <b>🏴‍☠️ 欢迎来到海贼王猜角色游戏！</b><br>
+        我已经选好了一个角色，你可以问我关于这个角色的问题。<br>
+        <span class="tip">💡 提示：点击角色卡片可以排除/猜测角色哦~</span>
+      </div>
+    </div>
+    <div class="chat-input-area">
+      <textarea id="chat-input" placeholder="提问示例：这名角色是男性吗？&#10;猜测示例：这名角色是路飞吗？" rows="2" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendMessage()}"></textarea>
+      <button class="send-btn" id="send-btn" onclick="sendMessage()"><img src="UI/button_submit_transparent.png" alt="发送"></button>
+    </div>
+  </div>
+  <div class="crew-bar">
+    <img class="crew-char" src="UI/布鲁克UI.png" alt="布鲁克">
+    <img class="crew-char" src="UI/乌索普UI.png" alt="乌索普">
+    <img class="crew-char" src="UI/娜美UI.png" alt="娜美">
+    <img class="crew-char" src="UI/索隆UI.png" alt="索隆">
+    <img class="crew-char" src="UI/路飞UI.png" alt="路飞">
+    <img class="crew-char" src="UI/山治UI.png" alt="山治">
+    <img class="crew-char" src="UI/甚平UI.png" alt="甚平">
+    <img class="crew-char" src="UI/乔巴UI.png" alt="乔巴">
+    <img class="crew-char" src="UI/罗宾UI.png" alt="罗宾">
+    <img class="crew-char" src="UI/弗兰奇UI.png" alt="弗兰奇">
+  </div>
+</div>
+
+<!-- ========== 界面3：结果界面 ========== -->
+<div id="page-result" class="page">
+  <div class="result-overlay">
+    <img id="result-img" class="result-img" src="" alt="结果">
+    <img id="result-char-img" class="result-char-img" src="" alt="谜底角色">
+    <h2 id="result-text" class="result-text"></h2>
+    <p id="result-answer" class="result-answer"></p>
+    <div class="result-stats">
+      <span class="result-stat">⏱ 用时 <span id="result-time">00:00</span></span>
+      <span class="result-stat">💬 提问 <span id="result-questions">0</span> 次</span>
+    </div>
+    <div class="result-buttons">
+      <button class="result-btn" onclick="restartGame()" title="再来一局"><img src="UI/重来按钮.png" alt="再来"></button>
+      <button class="result-btn" onclick="backToMenu()" title="返回主页"><img src="UI/主页按钮.png" alt="主页"></button>
+    </div>
+  </div>
+  <div class="crew-bar">
+    <img class="crew-char" src="UI/布鲁克UI.png" alt="布鲁克">
+    <img class="crew-char" src="UI/乌索普UI.png" alt="乌索普">
+    <img class="crew-char" src="UI/娜美UI.png" alt="娜美">
+    <img class="crew-char" src="UI/索隆UI.png" alt="索隆">
+    <img class="crew-char" src="UI/路飞UI.png" alt="路飞">
+    <img class="crew-char" src="UI/山治UI.png" alt="山治">
+    <img class="crew-char" src="UI/甚平UI.png" alt="甚平">
+    <img class="crew-char" src="UI/乔巴UI.png" alt="乔巴">
+    <img class="crew-char" src="UI/罗宾UI.png" alt="罗宾">
+    <img class="crew-char" src="UI/弗兰奇UI.png" alt="弗兰奇">
+  </div>
+</div>
+
+<script src="prompt.js"></script>
+<script src="game-logic.js"></script>
+</body>
+</html>
