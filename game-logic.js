@@ -192,19 +192,14 @@ let state = {
   timerInterval: null  // 计时器定时器
 };
 
-// ===== API配置（智谱AI GLM-4-Flash） =====
-// Vercel部署: 使用相对路径 /api/chat（serverless函数自动处理CORS）
-// 本地开发: node proxy-server.js 后也可用 localhost:3456
+// ===== API配置（服务端的 DeepSeek + 博查接口） =====
+// 所有密钥只保存在 Vercel / Cloudflare 的环境变量中，浏览器不会持有密钥。
 const API_CONFIG = {
-  proxyUrl: '/api/chat',
-  directUrl: 'https://open.bigmodel.cn/api/paas/v4/chat/completions',
-  key: '48563eab875b43b1b3330ddbab1d7a7b.CEWi3il7NttkY7RL',
-  model: 'glm-4-flash',
-  useProxy: true  // 默认使用代理（Vercel上始终为true）
+  proxyUrl: '/api/chat'
 };
 
 function getApiUrl() {
-  return API_CONFIG.useProxy ? API_CONFIG.proxyUrl : API_CONFIG.directUrl;
+  return API_CONFIG.proxyUrl;
 }
 
 // ===== 页面切换 =====
@@ -596,34 +591,20 @@ function sendMessage() {
 
   showTyping();
 
-  if (!API_CONFIG.key) {
-    hideTyping();
-    addChat('ai', '尚未配置API密钥');
-    return;
-  }
-
-  // 构建请求体：通过tools参数启用web_search联网搜索
+  // 服务端会使用博查搜索该角色的相关资料，并交给 DeepSeek-V4-Flash 作出裁判。
   var messages = [{role:'system', content: systemPrompt}].concat(state.chatHistory);
 
   var chatBody = {
-    model: API_CONFIG.model,
     messages: messages,
     max_tokens: 150,
     temperature: 0.3,
-    tools: [{
-      type: 'web_search',
-      web_search: {
-        enable: true,
-        search_query: state.answer.name + ' 海贼王 ' + msg
-      }
-    }]
+    search_query: state.answer.name + ' 海贼王 ' + msg
   };
 
   fetch(getApiUrl(), {
     method: 'POST',
     headers: {
-      'Content-Type': 'application/json',
-      'Authorization': 'Bearer ' + API_CONFIG.key
+      'Content-Type': 'application/json'
     },
     body: JSON.stringify(chatBody)
   })
@@ -632,8 +613,8 @@ function sendMessage() {
     hideTyping();
 
     if (data.error) {
-      // API返回错误，降级为不联网搜索重试
-      console.warn('API error with web_search, retrying without:', data.error);
+      // 搜索或模型接口出现异常时，降级为不带搜索上下文的裁判请求。
+      console.warn('API error, retrying without search:', data.error);
       retryWithoutSearch(systemPrompt);
       return;
     }
@@ -647,7 +628,7 @@ function sendMessage() {
     checkWin(reply);
   })
   .catch(function(err) {
-    console.warn('Request failed, retrying without web_search:', err);
+    console.warn('Request failed, retrying without search:', err);
     retryWithoutSearch(systemPrompt);
   });
 }
@@ -659,14 +640,13 @@ function retryWithoutSearch(systemPrompt) {
   fetch(getApiUrl(), {
     method: 'POST',
     headers: {
-      'Content-Type': 'application/json',
-      'Authorization': 'Bearer ' + API_CONFIG.key
+      'Content-Type': 'application/json'
     },
     body: JSON.stringify({
-      model: API_CONFIG.model,
       messages: messages,
       max_tokens: 150,
-      temperature: 0.3
+      temperature: 0.3,
+      search_query: ''
     })
   })
   .then(function(resp) { return resp.json(); })
@@ -889,25 +869,9 @@ function handleResize() {
 
 window.addEventListener('resize', handleResize);
 
-// ===== 启动时检测代理可用性 =====
+// ===== 启动时确认使用同源服务端接口 =====
 (function checkProxy() {
-  // Vercel部署时 /api/chat 始终可用，无需检测
-  // 本地开发时检测 proxy-server.js 是否运行
-  if (API_CONFIG.proxyUrl === '/api/chat') {
-    API_CONFIG.useProxy = true;
-    console.log('Using serverless API endpoint: /api/chat');
-    return;
-  }
-  fetch(API_CONFIG.proxyUrl, {method: 'OPTIONS'})
-  .then(function() {
-    API_CONFIG.useProxy = true;
-    console.log('Proxy server detected, using proxy mode');
-  })
-  .catch(function() {
-    API_CONFIG.useProxy = false;
-    console.warn('Proxy server not available, using direct mode (may have CORS issues)');
-    console.warn('Start proxy: node proxy-server.js');
-  });
+  console.log('Using secure serverless API endpoint: /api/chat');
 })();
 
 // ===== 页面加载完成后初始化触摸 =====

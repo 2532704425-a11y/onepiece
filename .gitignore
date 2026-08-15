@@ -2,3 +2,8 @@
 node_modules/
 *.py
 -/
+.env
+.env.*
+!.env.example
+
+.vercel
