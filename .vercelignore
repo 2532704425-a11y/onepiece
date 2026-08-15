@@ -1,0 +1,9 @@
+# Local development and backup files are not part of the production website.
+.git
+.workbuddy
+node_modules
+*.zip
+*.py
+proxy-server.js
+.env
+.env.*
