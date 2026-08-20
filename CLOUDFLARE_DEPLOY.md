@@ -63,6 +63,10 @@
 
 保存后重新部署。前端只会调用 `/api/chat`，博查密钥只在 Cloudflare 服务端使用。
 
+### 可选：Pages 前端 + 独立 AI 后端
+
+若已在 Vercel、Railway 等平台部署了安全的 `/api/chat` 后端，可改为在 Cloudflare Pages 添加 `CHAT_UPSTREAM_URL`（Production secret），值为该后端完整地址。此时 Pages Function 仅转发请求，博查密钥仍只保存在独立后端；不要同时依赖前端环境变量保存 API Key。
+
 ---
 
 ## 第四步：等待部署完成

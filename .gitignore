@@ -1,5 +1,6 @@
 .workbuddy/
 node_modules/
+.wrangler/
 *.py
 -/
 .env

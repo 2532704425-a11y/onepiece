@@ -23,6 +23,24 @@ export async function onRequestOptions() {
 
 export async function onRequestPost(context) {
   const { request, env } = context;
+  // 可选的分离式部署：Pages 仅承载前端与转发层，AI 网关部署在独立服务端。
+  // 这样 Cloudflare Pages 不需要保存模型密钥，适合已有 Vercel/Railway 后端的场景。
+  if (env.CHAT_UPSTREAM_URL) {
+    try {
+      const upstreamResponse = await fetch(env.CHAT_UPSTREAM_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: await request.text(),
+      });
+      return new Response(await upstreamResponse.text(), {
+        status: upstreamResponse.status,
+        headers: { 'Content-Type': 'application/json', ...CORS_HEADERS },
+      });
+    } catch (error) {
+      return Response.json({ error: 'Upstream chat gateway failed: ' + error.message }, { status: 502, headers: CORS_HEADERS });
+    }
+  }
+
   if (!env.BOCHA_API_KEY) {
     return Response.json({ error: 'Server is missing BOCHA_API_KEY.' }, { status: 500, headers: CORS_HEADERS });
   }
