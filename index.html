@@ -41,6 +41,7 @@
         <img src="assets/UI/高级难度按钮.webp" alt="高级" fetchpriority="high" decoding="async">
       </button>
     </div>
+    <button class="history-entry" onclick="showHistory()">🏆 查看我的战绩</button>
   </div>
   <div class="crew-bar">
     <img class="crew-char" src="assets/UI/布鲁克UI.webp" alt="布鲁克" loading="lazy" decoding="async">
@@ -53,6 +54,33 @@
     <img class="crew-char" src="assets/UI/乔巴UI.webp" alt="乔巴" loading="lazy" decoding="async">
     <img class="crew-char" src="assets/UI/罗宾UI.webp" alt="罗宾" loading="lazy" decoding="async">
     <img class="crew-char" src="assets/UI/弗兰奇UI.webp" alt="弗兰奇" loading="lazy" decoding="async">
+  </div>
+</div>
+
+<!-- ========== 界面：对战战绩 ========== -->
+<div id="page-history" class="page">
+  <div class="history-overlay">
+    <section class="history-card" aria-labelledby="history-title">
+      <div class="history-head">
+        <div>
+          <p class="history-eyebrow">BATTLE RECORDS</p>
+          <h2 id="history-title">我的对战战绩</h2>
+        </div>
+        <button class="history-back" onclick="backToMenu()" aria-label="返回主页">← 返回</button>
+      </div>
+      <p class="history-rule">同一难度内，按提问次数从少到多排序；提问次数相同时，按用时从短到长排序。</p>
+      <div class="history-tabs" role="tablist" aria-label="选择难度">
+        <button class="history-tab active" data-difficulty="easy" onclick="showHistory('easy')">简单</button>
+        <button class="history-tab" data-difficulty="medium" onclick="showHistory('medium')">中等</button>
+        <button class="history-tab" data-difficulty="hard" onclick="showHistory('hard')">高级</button>
+      </div>
+      <div id="history-summary" class="history-summary"></div>
+      <div id="history-list" class="history-list" aria-live="polite"></div>
+      <div class="history-actions">
+        <span>战绩仅保存在当前浏览器</span>
+        <button class="history-clear" onclick="clearHistory()">清空所有战绩</button>
+      </div>
+    </section>
   </div>
 </div>
 
@@ -124,6 +152,7 @@
       <button class="result-btn" onclick="restartGame()" title="再来一局"><img src="assets/UI/重来按钮.webp" alt="再来" loading="lazy" decoding="async"></button>
       <button class="result-btn" onclick="backToMenu()" title="返回主页"><img src="assets/UI/主页按钮.webp" alt="主页" loading="lazy" decoding="async"></button>
     </div>
+    <button class="result-history-link" onclick="showHistory()">🏆 查看本地战绩</button>
   </div>
   <div class="crew-bar">
     <img class="crew-char" src="assets/UI/布鲁克UI.webp" alt="布鲁克" loading="lazy" decoding="async">

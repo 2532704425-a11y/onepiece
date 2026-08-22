@@ -189,7 +189,8 @@ let state = {
   gameOver: false,
   questionCount: 0,   // 提问次数
   startTime: null,     // 游戏开始时间
-  timerInterval: null  // 计时器定时器
+  timerInterval: null, // 计时器定时器
+  resultRecorded: false
 };
 
 // ===== API配置（服务端的 DeepSeek + 博查接口） =====
@@ -197,6 +198,9 @@ let state = {
 const API_CONFIG = {
   proxyUrl: '/api/chat'
 };
+const HISTORY_STORAGE_KEY = 'onepiece-guess-battle-history-v1';
+const HISTORY_LIMIT = 200;
+var currentHistoryDifficulty = 'easy';
 
 function getApiUrl() {
   return API_CONFIG.proxyUrl;
@@ -205,6 +209,122 @@ function getApiUrl() {
 // 原始 PNG 只保留在项目中作为美术源文件；浏览器统一使用更小的 WebP 成品。
 function assetUrl(path) {
   return 'assets/' + String(path).replace(/\.png$/i, '.webp');
+}
+
+// ===== 本地对战战绩 =====
+function loadBattleHistory() {
+  try {
+    var saved = JSON.parse(localStorage.getItem(HISTORY_STORAGE_KEY) || '[]');
+    return Array.isArray(saved) ? saved.filter(function(record) {
+      return record && CONFIG[record.difficulty] &&
+        Number.isFinite(Number(record.questionCount)) &&
+        Number.isFinite(Number(record.durationMs));
+    }) : [];
+  } catch (error) {
+    console.warn('Unable to read battle history:', error);
+    return [];
+  }
+}
+
+function saveBattleHistory(record) {
+  try {
+    var history = loadBattleHistory();
+    history.push(record);
+    localStorage.setItem(HISTORY_STORAGE_KEY, JSON.stringify(history.slice(-HISTORY_LIMIT)));
+  } catch (error) {
+    console.warn('Unable to save battle history:', error);
+  }
+}
+
+function recordCurrentBattle(win, durationMs) {
+  if (state.resultRecorded || !state.difficulty) return;
+  state.resultRecorded = true;
+  saveBattleHistory({
+    id: Date.now() + '-' + Math.random().toString(36).slice(2, 8),
+    difficulty: state.difficulty,
+    win: Boolean(win),
+    questionCount: state.questionCount,
+    durationMs: Math.max(0, Math.floor(durationMs)),
+    playedAt: new Date().toISOString()
+  });
+}
+
+function formatHistoryDate(value) {
+  var date = new Date(value);
+  if (Number.isNaN(date.getTime())) return '日期未知';
+  function pad(number) { return number < 10 ? '0' + number : String(number); }
+  return date.getFullYear() + '-' + pad(date.getMonth() + 1) + '-' + pad(date.getDate()) + ' ' + pad(date.getHours()) + ':' + pad(date.getMinutes());
+}
+
+function showHistory(difficulty) {
+  if (difficulty && CONFIG[difficulty]) currentHistoryDifficulty = difficulty;
+  renderHistory();
+  showPage('page-history');
+}
+
+function renderHistory() {
+  var difficulty = currentHistoryDifficulty;
+  var records = loadBattleHistory().filter(function(record) { return record.difficulty === difficulty; }).sort(function(a, b) {
+    var questionDifference = Number(a.questionCount) - Number(b.questionCount);
+    if (questionDifference !== 0) return questionDifference;
+    var durationDifference = Number(a.durationMs) - Number(b.durationMs);
+    if (durationDifference !== 0) return durationDifference;
+    return new Date(b.playedAt).getTime() - new Date(a.playedAt).getTime();
+  });
+  var list = document.getElementById('history-list');
+  var summary = document.getElementById('history-summary');
+  if (!list || !summary) return;
+
+  document.querySelectorAll('.history-tab').forEach(function(tab) {
+    tab.classList.toggle('active', tab.getAttribute('data-difficulty') === difficulty);
+  });
+  var wins = records.filter(function(record) { return record.win; }).length;
+  summary.textContent = CONFIG[difficulty].label + '：共 ' + records.length + ' 局，胜利 ' + wins + ' 局';
+  list.innerHTML = '';
+
+  if (records.length === 0) {
+    var empty = document.createElement('div');
+    empty.className = 'history-empty';
+    empty.textContent = '这个难度还没有战绩。\n完成一局游戏后会自动记录在这里。';
+    list.appendChild(empty);
+    return;
+  }
+
+  records.forEach(function(record, index) {
+    var row = document.createElement('article');
+    row.className = 'history-row';
+    var rank = document.createElement('div');
+    rank.className = 'history-rank';
+    rank.textContent = '#' + (index + 1);
+    var main = document.createElement('div');
+    main.className = 'history-main';
+    var result = document.createElement('span');
+    result.className = 'history-result ' + (record.win ? 'win' : 'lose');
+    result.textContent = record.win ? '通关' : '失败';
+    var questions = document.createElement('span');
+    questions.className = 'history-metric';
+    questions.textContent = '💬 ' + Number(record.questionCount) + ' 次提问';
+    var duration = document.createElement('span');
+    duration.className = 'history-metric';
+    duration.textContent = '⏱ ' + formatTime(Number(record.durationMs));
+    main.append(result, questions, duration);
+    var date = document.createElement('time');
+    date.className = 'history-date';
+    date.dateTime = record.playedAt || '';
+    date.textContent = formatHistoryDate(record.playedAt);
+    row.append(rank, main, date);
+    list.appendChild(row);
+  });
+}
+
+function clearHistory() {
+  if (!window.confirm('确定要清空全部本地战绩吗？此操作无法恢复。')) return;
+  try {
+    localStorage.removeItem(HISTORY_STORAGE_KEY);
+  } catch (error) {
+    console.warn('Unable to clear battle history:', error);
+  }
+  renderHistory();
 }
 
 // ===== 页面切换 =====
@@ -238,6 +358,7 @@ function startGame(difficulty) {
   state.chatHistory = [];
   state.gameOver = false;
   state.questionCount = 0;
+  state.resultRecorded = false;
 
   // 停止之前的计时器
   if (state.timerInterval) {
@@ -487,6 +608,7 @@ function showResult(win) {
   var img = document.getElementById('result-img');
   var text = document.getElementById('result-text');
   var answer = document.getElementById('result-answer');
+  var durationMs = Date.now() - state.startTime;
 
   // 停止计时器
   if (state.timerInterval) {
@@ -509,8 +631,9 @@ function showResult(win) {
   var charImg = document.getElementById('result-char-img');
   if (charImg) charImg.src = assetUrl(state.answer.img);
 
-  // 展示统计数据
-  document.getElementById('result-time').textContent = formatTime(Date.now() - state.startTime);
+  // 记录战绩并展示统计数据
+  recordCurrentBattle(win, durationMs);
+  document.getElementById('result-time').textContent = formatTime(durationMs);
   document.getElementById('result-questions').textContent = state.questionCount;
 
   showPage('page-result');

@@ -19,6 +19,33 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:'Microsoft YaHei','
 .diff-btn img{width:200px;filter:drop-shadow(0 4px 8px rgba(0,0,0,0.5))}
 .diff-btn:hover{transform:scale(1.08);filter:brightness(1.15)}
 .diff-btn:active{transform:scale(0.96)}
+.history-entry{margin-top:18px;padding:10px 20px;border:2px solid #c8a96e;border-radius:999px;background:rgba(30,20,10,0.76);color:#ffe0b2;font:700 14px inherit;letter-spacing:1px;cursor:pointer;transition:transform .2s,background .2s,color .2s}
+.history-entry:hover{transform:translateY(-2px);background:rgba(200,169,110,.28);color:#fff3d4}
+
+/* ===== 对战战绩 ===== */
+#page-history{background:url('assets/UI/背景1.webp') center/cover no-repeat;justify-content:center;overflow-y:auto}
+.history-overlay{width:100%;min-height:100%;padding:32px 16px 48px;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,.38)}
+.history-card{width:min(760px,100%);max-height:calc(100vh - 64px);overflow:auto;padding:24px;border:2px solid #c8a96e;border-radius:16px;background:rgba(31,22,12,.94);box-shadow:0 18px 50px rgba(0,0,0,.5);color:#ffe0b2}
+.history-head{display:flex;align-items:flex-start;justify-content:space-between;gap:16px}
+.history-eyebrow{color:#c8a96e;font-size:10px;font-weight:700;letter-spacing:2px}
+.history-head h2{margin-top:3px;color:#ffd54f;font-size:24px}
+.history-back,.history-clear{border:1px solid #c8a96e;border-radius:8px;background:rgba(200,169,110,.12);color:#ffe0b2;font:700 13px inherit;cursor:pointer;transition:background .2s}
+.history-back{padding:8px 12px;white-space:nowrap}
+.history-back:hover,.history-clear:hover{background:rgba(200,169,110,.3)}
+.history-rule{margin:16px 0;color:#c8b8a0;font-size:12px;line-height:1.65}
+.history-tabs{display:flex;gap:8px;padding-bottom:12px;border-bottom:1px solid #5d4e37}
+.history-tab{flex:1;padding:9px 8px;border:1px solid #725e3d;border-radius:8px;background:rgba(255,255,255,.04);color:#c8b8a0;font:700 14px inherit;cursor:pointer;transition:background .2s,color .2s,border-color .2s}
+.history-tab.active,.history-tab:hover{border-color:#ffd54f;background:rgba(255,213,79,.16);color:#ffd54f}
+.history-summary{padding:12px 0 8px;color:#c8a96e;font-size:13px}
+.history-list{display:flex;flex-direction:column;gap:8px;min-height:120px}
+.history-empty{display:flex;min-height:120px;align-items:center;justify-content:center;border:1px dashed #6d5b3e;border-radius:10px;color:#b9a68c;font-size:13px;text-align:center;line-height:1.7}
+.history-row{display:grid;grid-template-columns:36px 1fr auto;align-items:center;gap:10px;padding:10px 12px;border:1px solid rgba(200,169,110,.32);border-radius:10px;background:rgba(255,255,255,.045)}
+.history-rank{color:#ffd54f;font-size:15px;font-weight:900;text-align:center}
+.history-main{display:flex;flex-wrap:wrap;align-items:center;gap:6px 10px;min-width:0}
+.history-result{font-weight:900;font-size:13px}.history-result.win{color:#9ee493}.history-result.lose{color:#ff9f98}
+.history-metric{color:#e8dcc8;font-size:12px}.history-date{width:132px;color:#a9967c;font-size:11px;text-align:right;line-height:1.5}
+.history-actions{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-top:14px;color:#97856f;font-size:11px}
+.history-clear{padding:7px 10px;color:#ffb0a8;border-color:#8f574d}
 
 /* ===== 界面2：游戏 ===== */
 #page-game{background:url('assets/UI/背景3.webp') center/cover no-repeat;flex-direction:row;flex-wrap:wrap}
@@ -124,6 +151,8 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:'Microsoft YaHei','
 .result-btn{cursor:pointer;border:none;background:none;transition:transform 0.2s}
 .result-btn img{width:52px;height:52px;filter:drop-shadow(0 3px 6px rgba(0,0,0,0.4))}
 .result-btn:hover{transform:scale(1.15)}
+.result-history-link{margin-top:14px;border:none;background:transparent;color:#ffe0b2;font:700 13px inherit;text-decoration:underline;cursor:pointer}
+.result-history-link:hover{color:#ffd54f}
 
 /* ===== 底部草帽团 ===== */
 .crew-bar{position:fixed;bottom:0;left:0;right:0;height:70px;display:flex;justify-content:center;align-items:flex-end;gap:4px;padding:0 20px 4px;background:linear-gradient(transparent 0%,rgba(20,12,5,0.85) 40%);z-index:50;pointer-events:none}
@@ -211,6 +240,7 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:'Microsoft YaHei','
   .rules-card{width:92%;padding:12px 16px}
   .rules-card p{font-size:12px;line-height:1.7}
   .diff-btn img{width:160px}
+  .history-entry{margin-top:14px;padding:8px 16px;font-size:12px}
 
   /* 结果页 */
   .result-img{width:140px}
@@ -304,6 +334,14 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:'Microsoft YaHei','
   .result-buttons{gap:12px;margin-top:20px}
   .result-btn img{width:44px;height:44px}
   .result-overlay{padding-bottom:60px}
+  .history-overlay{padding:16px 10px}
+  .history-card{max-height:calc(100vh - 32px);padding:16px 14px}
+  .history-head h2{font-size:20px}
+  .history-rule{margin:12px 0;font-size:11px}
+  .history-tabs{gap:5px}.history-tab{padding:8px 4px;font-size:12px}
+  .history-row{grid-template-columns:28px 1fr;padding:9px 8px;gap:8px}
+  .history-date{grid-column:2;width:auto;text-align:left;font-size:10px}
+  .history-actions{font-size:10px}
 
   /* 聊天 */
   .chat-header{padding:8px;font-size:12px}
