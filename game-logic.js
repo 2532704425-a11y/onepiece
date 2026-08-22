@@ -202,6 +202,11 @@ function getApiUrl() {
   return API_CONFIG.proxyUrl;
 }
 
+// 原始 PNG 只保留在项目中作为美术源文件；浏览器统一使用更小的 WebP 成品。
+function assetUrl(path) {
+  return 'assets/' + String(path).replace(/\.png$/i, '.webp');
+}
+
 // ===== 页面切换 =====
 function showPage(id) {
   document.querySelectorAll('.page').forEach(function(p) { p.classList.remove('active'); });
@@ -306,7 +311,7 @@ function renderGrid() {
     if (c.eliminated) card.className += ' eliminated';
     if (c.eliminated && state.hideEliminated) card.className += ' hidden';
     card.innerHTML = '<div class="card-inner">' +
-      '<div class="card-front"><img src="' + c.img + '" alt="' + c.name + '"><div class="char-name">' + c.name + '</div></div>' +
+      '<div class="card-front"><img src="' + assetUrl(c.img) + '" alt="' + c.name + '" loading="lazy" decoding="async"><div class="char-name">' + c.name + '</div></div>' +
       '<div class="card-back"><div class="x-mark">' + String.fromCodePoint(0x2716) + '</div><div class="elim-name">' + c.name + '</div></div>' +
       '</div>';
     card.setAttribute('data-index', i);
@@ -399,7 +404,7 @@ function showConfirm(c, index) {
   overlay.className = 'confirm-overlay';
   overlay.innerHTML =
     '<div class="confirm-box">' +
-    '<img class="char-preview" src="' + c.img + '" alt="' + c.name + '">' +
+    '<img class="char-preview" src="' + assetUrl(c.img) + '" alt="' + c.name + '" decoding="async">' +
     '<div class="confirm-name">' + c.name + '</div>' +
     '<p>你要对这个角色做什么？</p>' +
     '<div class="confirm-btns">' +
@@ -490,11 +495,11 @@ function showResult(win) {
   }
 
   if (win) {
-    img.src = 'UI/ed98e7765c53c5124815a3e105d95cc9.png';
+    img.src = 'assets/UI/ed98e7765c53c5124815a3e105d95cc9.webp';
     text.textContent = String.fromCodePoint(0x1F389) + ' 恭喜通关！';
     text.className = 'result-text win';
   } else {
-    img.src = 'UI/9c2da25347345bffc1518e0b059d003cfaec2e2845b7429666b5cf1a779abc83.png';
+    img.src = 'assets/UI/9c2da25347345bffc1518e0b059d003cfaec2e2845b7429666b5cf1a779abc83.webp';
     text.textContent = String.fromCodePoint(0x1F62D) + ' 挑战失败';
     text.className = 'result-text lose';
   }
@@ -502,7 +507,7 @@ function showResult(win) {
 
   // 设置谜底角色图片
   var charImg = document.getElementById('result-char-img');
-  if (charImg) charImg.src = state.answer.img;
+  if (charImg) charImg.src = assetUrl(state.answer.img);
 
   // 展示统计数据
   document.getElementById('result-time').textContent = formatTime(Date.now() - state.startTime);

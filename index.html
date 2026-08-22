@@ -7,6 +7,11 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="theme-color" content="#1a1206">
 <title>海贼王猜角色小游戏</title>
+<link rel="preload" as="image" href="assets/UI/背景1.webp" fetchpriority="high">
+<link rel="preload" as="image" href="assets/UI/ed98e7765c53c5124815a3e105d95cc9.webp" fetchpriority="high">
+<link rel="preload" as="image" href="assets/UI/简单难度按钮.webp" fetchpriority="high">
+<link rel="preload" as="image" href="assets/UI/中级难度按钮.webp" fetchpriority="high">
+<link rel="preload" as="image" href="assets/UI/高级难度按钮.webp" fetchpriority="high">
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -15,7 +20,7 @@
 <div id="page-menu" class="page active">
   <div class="menu-overlay">
     <div class="title-area">
-      <img class="title-mascot" src="UI/ed98e7765c53c5124815a3e105d95cc9.png" alt="路飞">
+      <img class="title-mascot" src="assets/UI/ed98e7765c53c5124815a3e105d95cc9.webp" alt="路飞" fetchpriority="high" decoding="async">
       <h1 class="game-title">海贼王猜角色小游戏</h1>
     </div>
     <div class="rules-card">
@@ -27,27 +32,27 @@
     </div>
     <div class="diff-buttons">
       <button class="diff-btn diff-easy" onclick="startGame('easy')">
-        <img src="UI/简单难度按钮.png" alt="简单">
+        <img src="assets/UI/简单难度按钮.webp" alt="简单" fetchpriority="high" decoding="async">
       </button>
       <button class="diff-btn diff-medium" onclick="startGame('medium')">
-        <img src="UI/中级难度按钮.png" alt="中等">
+        <img src="assets/UI/中级难度按钮.webp" alt="中等" fetchpriority="high" decoding="async">
       </button>
       <button class="diff-btn diff-hard" onclick="startGame('hard')">
-        <img src="UI/高级难度按钮.png" alt="高级">
+        <img src="assets/UI/高级难度按钮.webp" alt="高级" fetchpriority="high" decoding="async">
       </button>
     </div>
   </div>
   <div class="crew-bar">
-    <img class="crew-char" src="UI/布鲁克UI.png" alt="布鲁克">
-    <img class="crew-char" src="UI/乌索普UI.png" alt="乌索普">
-    <img class="crew-char" src="UI/娜美UI.png" alt="娜美">
-    <img class="crew-char" src="UI/索隆UI.png" alt="索隆">
-    <img class="crew-char" src="UI/路飞UI.png" alt="路飞">
-    <img class="crew-char" src="UI/山治UI.png" alt="山治">
-    <img class="crew-char" src="UI/甚平UI.png" alt="甚平">
-    <img class="crew-char" src="UI/乔巴UI.png" alt="乔巴">
-    <img class="crew-char" src="UI/罗宾UI.png" alt="罗宾">
-    <img class="crew-char" src="UI/弗兰奇UI.png" alt="弗兰奇">
+    <img class="crew-char" src="assets/UI/布鲁克UI.webp" alt="布鲁克" loading="lazy" decoding="async">
+    <img class="crew-char" src="assets/UI/乌索普UI.webp" alt="乌索普" loading="lazy" decoding="async">
+    <img class="crew-char" src="assets/UI/娜美UI.webp" alt="娜美" loading="lazy" decoding="async">
+    <img class="crew-char" src="assets/UI/索隆UI.webp" alt="索隆" loading="lazy" decoding="async">
+    <img class="crew-char" src="assets/UI/路飞UI.webp" alt="路飞" loading="lazy" decoding="async">
+    <img class="crew-char" src="assets/UI/山治UI.webp" alt="山治" loading="lazy" decoding="async">
+    <img class="crew-char" src="assets/UI/甚平UI.webp" alt="甚平" loading="lazy" decoding="async">
+    <img class="crew-char" src="assets/UI/乔巴UI.webp" alt="乔巴" loading="lazy" decoding="async">
+    <img class="crew-char" src="assets/UI/罗宾UI.webp" alt="罗宾" loading="lazy" decoding="async">
+    <img class="crew-char" src="assets/UI/弗兰奇UI.webp" alt="弗兰奇" loading="lazy" decoding="async">
   </div>
 </div>
 
@@ -55,9 +60,9 @@
 <div id="page-game" class="page">
   <div class="game-topbar">
     <div class="topbar-controls">
-      <button class="ctrl-btn" onclick="backToMenu()" title="返回主页"><img src="UI/主页按钮.png" alt="主页"></button>
-      <button class="ctrl-btn" onclick="restartGame()" title="重新开始"><img src="UI/重来按钮.png" alt="重来"></button>
-      <button class="ctrl-btn" onclick="toggleEliminated()" title="显示/隐藏已排除"><img src="UI/设置按钮.png" alt="设置"></button>
+      <button class="ctrl-btn" onclick="backToMenu()" title="返回主页"><img src="assets/UI/主页按钮.webp" alt="主页" loading="lazy" decoding="async"></button>
+      <button class="ctrl-btn" onclick="restartGame()" title="重新开始"><img src="assets/UI/重来按钮.webp" alt="重来" loading="lazy" decoding="async"></button>
+      <button class="ctrl-btn" onclick="toggleEliminated()" title="显示/隐藏已排除"><img src="assets/UI/设置按钮.webp" alt="设置" loading="lazy" decoding="async"></button>
     </div>
     <div class="topbar-stats">
       <span class="stat-item" title="游戏计时">⏱ <span id="game-timer">00:00</span></span>
@@ -87,20 +92,20 @@
     </div>
     <div class="chat-input-area">
       <textarea id="chat-input" placeholder="提问示例：这名角色是男性吗？&#10;猜测示例：这名角色是路飞吗？" rows="2" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendMessage()}"></textarea>
-      <button class="send-btn" id="send-btn" onclick="sendMessage()"><img src="UI/button_submit_transparent.png" alt="发送"></button>
+      <button class="send-btn" id="send-btn" onclick="sendMessage()"><img src="assets/UI/button_submit_transparent.webp" alt="发送" loading="lazy" decoding="async"></button>
     </div>
   </div>
   <div class="crew-bar">
-    <img class="crew-char" src="UI/布鲁克UI.png" alt="布鲁克">
-    <img class="crew-char" src="UI/乌索普UI.png" alt="乌索普">
-    <img class="crew-char" src="UI/娜美UI.png" alt="娜美">
-    <img class="crew-char" src="UI/索隆UI.png" alt="索隆">
-    <img class="crew-char" src="UI/路飞UI.png" alt="路飞">
-    <img class="crew-char" src="UI/山治UI.png" alt="山治">
-    <img class="crew-char" src="UI/甚平UI.png" alt="甚平">
-    <img class="crew-char" src="UI/乔巴UI.png" alt="乔巴">
-    <img class="crew-char" src="UI/罗宾UI.png" alt="罗宾">
-    <img class="crew-char" src="UI/弗兰奇UI.png" alt="弗兰奇">
+    <img class="crew-char" src="assets/UI/布鲁克UI.webp" alt="布鲁克" loading="lazy" decoding="async">
+    <img class="crew-char" src="assets/UI/乌索普UI.webp" alt="乌索普" loading="lazy" decoding="async">
+    <img class="crew-char" src="assets/UI/娜美UI.webp" alt="娜美" loading="lazy" decoding="async">
+    <img class="crew-char" src="assets/UI/索隆UI.webp" alt="索隆" loading="lazy" decoding="async">
+    <img class="crew-char" src="assets/UI/路飞UI.webp" alt="路飞" loading="lazy" decoding="async">
+    <img class="crew-char" src="assets/UI/山治UI.webp" alt="山治" loading="lazy" decoding="async">
+    <img class="crew-char" src="assets/UI/甚平UI.webp" alt="甚平" loading="lazy" decoding="async">
+    <img class="crew-char" src="assets/UI/乔巴UI.webp" alt="乔巴" loading="lazy" decoding="async">
+    <img class="crew-char" src="assets/UI/罗宾UI.webp" alt="罗宾" loading="lazy" decoding="async">
+    <img class="crew-char" src="assets/UI/弗兰奇UI.webp" alt="弗兰奇" loading="lazy" decoding="async">
   </div>
 </div>
 
@@ -116,21 +121,21 @@
       <span class="result-stat">💬 提问 <span id="result-questions">0</span> 次</span>
     </div>
     <div class="result-buttons">
-      <button class="result-btn" onclick="restartGame()" title="再来一局"><img src="UI/重来按钮.png" alt="再来"></button>
-      <button class="result-btn" onclick="backToMenu()" title="返回主页"><img src="UI/主页按钮.png" alt="主页"></button>
+      <button class="result-btn" onclick="restartGame()" title="再来一局"><img src="assets/UI/重来按钮.webp" alt="再来" loading="lazy" decoding="async"></button>
+      <button class="result-btn" onclick="backToMenu()" title="返回主页"><img src="assets/UI/主页按钮.webp" alt="主页" loading="lazy" decoding="async"></button>
     </div>
   </div>
   <div class="crew-bar">
-    <img class="crew-char" src="UI/布鲁克UI.png" alt="布鲁克">
-    <img class="crew-char" src="UI/乌索普UI.png" alt="乌索普">
-    <img class="crew-char" src="UI/娜美UI.png" alt="娜美">
-    <img class="crew-char" src="UI/索隆UI.png" alt="索隆">
-    <img class="crew-char" src="UI/路飞UI.png" alt="路飞">
-    <img class="crew-char" src="UI/山治UI.png" alt="山治">
-    <img class="crew-char" src="UI/甚平UI.png" alt="甚平">
-    <img class="crew-char" src="UI/乔巴UI.png" alt="乔巴">
-    <img class="crew-char" src="UI/罗宾UI.png" alt="罗宾">
-    <img class="crew-char" src="UI/弗兰奇UI.png" alt="弗兰奇">
+    <img class="crew-char" src="assets/UI/布鲁克UI.webp" alt="布鲁克" loading="lazy" decoding="async">
+    <img class="crew-char" src="assets/UI/乌索普UI.webp" alt="乌索普" loading="lazy" decoding="async">
+    <img class="crew-char" src="assets/UI/娜美UI.webp" alt="娜美" loading="lazy" decoding="async">
+    <img class="crew-char" src="assets/UI/索隆UI.webp" alt="索隆" loading="lazy" decoding="async">
+    <img class="crew-char" src="assets/UI/路飞UI.webp" alt="路飞" loading="lazy" decoding="async">
+    <img class="crew-char" src="assets/UI/山治UI.webp" alt="山治" loading="lazy" decoding="async">
+    <img class="crew-char" src="assets/UI/甚平UI.webp" alt="甚平" loading="lazy" decoding="async">
+    <img class="crew-char" src="assets/UI/乔巴UI.webp" alt="乔巴" loading="lazy" decoding="async">
+    <img class="crew-char" src="assets/UI/罗宾UI.webp" alt="罗宾" loading="lazy" decoding="async">
+    <img class="crew-char" src="assets/UI/弗兰奇UI.webp" alt="弗兰奇" loading="lazy" decoding="async">
   </div>
 </div>
 
